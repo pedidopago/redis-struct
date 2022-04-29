@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["*"]
+jobs:
+  test:
+    name: Test Go Code
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Go
+        uses: WillAbides/setup-go-faster@v1.5.0
+        with:
+          go-version: 1.18.x
+      - uses: actions/cache@v2
+        with:
+          # In order: [download modcache] [Linux] [Mac] [Windows]
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+            ~/Library/Caches/go-build
+            %LocalAppData%\go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Test Go Code
+        env:
+          REDIS_ADDR: redis:6379
+        run: |
+          go test ./...
