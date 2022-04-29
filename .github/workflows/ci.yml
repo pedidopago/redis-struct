@@ -37,6 +37,6 @@ jobs:
           fetch-depth: 1
       - name: Test Go Code
         env:
-          REDIS_ADDR: redis:6379
+          REDIS_ADDR: localhost:6379
         run: |
           go test ./...
