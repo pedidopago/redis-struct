@@ -26,7 +26,7 @@ func (c *client) Get(ctx context.Context, key string, target interface{}) error 
 		}
 		return e
 	}
-	return json.Unmarshal([]byte(r.String()), target)
+	return json.Unmarshal([]byte(r.Val()), target)
 }
 
 func (c *client) Set(ctx context.Context, key string, val interface{}, ttl time.Duration) error {
